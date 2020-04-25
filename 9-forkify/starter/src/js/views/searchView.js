@@ -2,7 +2,7 @@ import { elements } from "./base";
 
 export const getInput = () => elements.searchInput.value;
 
-const limitRecipeTitle = (title, limit = 17) => {
+export const limitRecipeTitle = (title, limit = 17) => {
   const newTitle = [];
   if (title.length > limit) {
     // pasta with tomato and spinach
@@ -44,6 +44,17 @@ export const clearSearchInput = () => {
 export const clearSearchResults = () => {
   elements.searchResList.innerHTML = "";
   elements.searchResPages.innerHTML = "";
+};
+
+export const highlightSelected = id => {
+  const resultsArr = Array.from(document.querySelectorAll(".results__link"));
+  resultsArr.forEach(el => {
+    el.classList.remove("results__link--active");
+  });
+
+  const selRecipe = document.querySelector(`.results__link[href*="#${id}"]`);
+
+  if (selRecipe) selRecipe.classList.add("results__link--active");
 };
 
 // type: 'prev' or 'next'

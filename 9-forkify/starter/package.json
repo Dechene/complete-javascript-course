@@ -25,6 +25,7 @@
     "@babel/plugin-transform-runtime": "^7.9.0",
     "@babel/runtime": "^7.9.2",
     "axios": "^0.19.2",
-    "babel-polyfill": "^6.26.0"
+    "babel-polyfill": "^6.26.0",
+    "uniqid": "^5.2.0"
   }
 }

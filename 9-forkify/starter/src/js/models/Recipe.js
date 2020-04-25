@@ -5,6 +5,18 @@ export default class Recipe {
     this.id = id;
   }
 
+  updateServings(type) {
+    //update servings
+    const newServings = type === "dec" ? this.servings - 1 : this.servings + 1;
+
+    //update ingredients
+    this.ingredients.forEach(ing => {
+      ing.count *= newServings / this.servings;
+    });
+
+    this.servings = newServings;
+  }
+
   async getRecipe() {
     try {
       const result = await axios(
@@ -37,7 +49,7 @@ export default class Recipe {
       "tablespoons",
       "tablespoon",
       "ounces",
-      "ounces",
+      "ounce",
       "teaspoons",
       "teaspoon",
       "cups",
@@ -53,7 +65,6 @@ export default class Recipe {
       "cup",
       "pound",
     ];
-
     const units = [...unitsShort, "kg", "g"];
 
     const newIngredients = this.ingredients.map(el => {
@@ -64,7 +75,7 @@ export default class Recipe {
       });
 
       // remove parentheses and all text within
-      ingredient = ingredient.replace(/ *\([^]*\) */g, " ");
+      ingredient = ingredient.replace(/ *\([^)]*\) */g, " ");
 
       // parse ingredients into count, unit and ingredient
       const arrIng = ingredient.split(" ");
@@ -72,29 +83,32 @@ export default class Recipe {
       // findIndex and includes are looking for the current el2 element, in the given array
       const unitIndex = arrIng.findIndex(el2 => units.includes(el2));
 
-      let objIng, count;
-
+      let objIng;
       if (unitIndex > -1) {
         // there is a unit
 
         // 4 1/2 cups - arrCount is [4, 1/2] --> eval('4+1/2') --> 4.5
         // 4 cups - arrCount is [4]
         const arrCount = arrIng.slice(0, unitIndex);
+
+        let count;
         if (arrCount.length === 1) {
           count = eval(arrIng[0].replace("-", "+"));
         } else {
           count = eval(arrIng.slice(0, unitIndex).join("+"));
         }
 
+        if (!count) count = 1;
+
         objIng = {
-          count,
+          count: Math.round(count),
           unit: arrIng[unitIndex],
           ingredient: arrIng.slice(unitIndex + 1).join(" "),
         };
       } else if (parseInt(arrIng[0], 10)) {
         // the first value is a number and there is no found Unit
         objIng = {
-          count: parseInt(arrIng[0]),
+          count: parseInt(arrIng[0], 10),
           unit: "",
           ingredient: arrIng.slice(1).join(" "),
         };
@@ -109,7 +123,6 @@ export default class Recipe {
 
       return objIng;
     });
-
     this.ingredients = newIngredients;
   }
 }
