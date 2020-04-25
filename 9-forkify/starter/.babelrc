@@ -1,11 +1,19 @@
 {
   "presets": [
     [
-      "env",
+      "@babel/preset-env",
       {
         "targets": {
-          "browser": ["last 5 versions", "ie >= 8"]
+          "browsers": ["last 5 versions", "ie >= 8"]
         }
+      }
+    ]
+  ],
+  "plugins": [
+    [
+      "@babel/plugin-transform-runtime",
+      {
+        "regenerator": true
       }
     ]
   ]
